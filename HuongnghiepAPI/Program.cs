@@ -78,8 +78,7 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("AllowFrontend");
 app.UseAuthentication(); // ⛔ PHẢI TRƯỚC
 app.UseAuthorization();  // ⛔ PHẢI SAU
-
-// Static files
+app.UseDefaultFiles();   // 👈 Tự động tìm index.html
 app.UseStaticFiles();
 
 app.MapControllers();
