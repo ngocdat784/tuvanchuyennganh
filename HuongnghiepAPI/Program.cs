@@ -15,7 +15,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=app.db")
 );
-
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -68,11 +67,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// ✅ SEED ADMIN
+// ✅ SEED + MIGRATE + COPY DATA
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var services = scope.ServiceProvider; // 👈 THÊM DÒNG NÀY
+
+    var context = services.GetRequiredService<AppDbContext>();
     context.Database.Migrate();
+
+
     DbInitializer.SeedAdmin(context);
 }
 app.UseCors("AllowFrontend");
