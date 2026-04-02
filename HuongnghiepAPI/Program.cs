@@ -10,10 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 // DB
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlite("Data Source=app.db")
 );
 
 // CORS
@@ -72,6 +71,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
     DbInitializer.SeedAdmin(context);
 }
 app.UseCors("AllowFrontend");
