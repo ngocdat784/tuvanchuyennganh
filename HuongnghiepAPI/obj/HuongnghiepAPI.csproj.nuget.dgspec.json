@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\huong_nghiep_thpt\\HuongnghiepAPI\\HuongnghiepAPI.csproj": {}
+    "D:\\tuvanchuyennganh\\HuongnghiepAPI\\HuongnghiepAPI.csproj": {}
   },
   "projects": {
-    "D:\\huong_nghiep_thpt\\HuongnghiepAPI\\HuongnghiepAPI.csproj": {
+    "D:\\tuvanchuyennganh\\HuongnghiepAPI\\HuongnghiepAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\huong_nghiep_thpt\\HuongnghiepAPI\\HuongnghiepAPI.csproj",
+        "projectUniqueName": "D:\\tuvanchuyennganh\\HuongnghiepAPI\\HuongnghiepAPI.csproj",
         "projectName": "HuongnghiepAPI",
-        "projectPath": "D:\\huong_nghiep_thpt\\HuongnghiepAPI\\HuongnghiepAPI.csproj",
+        "projectPath": "D:\\tuvanchuyennganh\\HuongnghiepAPI\\HuongnghiepAPI.csproj",
         "packagesPath": "C:\\Users\\Tran Ngoc Dat\\.nuget\\packages\\",
-        "outputPath": "D:\\huong_nghiep_thpt\\HuongnghiepAPI\\obj\\",
+        "outputPath": "D:\\tuvanchuyennganh\\HuongnghiepAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Tran Ngoc Dat\\AppData\\Roaming\\NuGet\\NuGet.Config"
