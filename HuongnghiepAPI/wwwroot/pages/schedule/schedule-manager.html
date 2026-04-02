@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý lịch tư vấn</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body { background:#f6f8fa; }
+.page-title { font-size:26px; font-weight:bold; margin-bottom:25px; }
+.action-btn { cursor:pointer; padding:5px 10px; border-radius:6px; font-size:14px; color:#fff; }
+.btn-delete { background:#dc3545; }
+.btn-status { background:#198754; }
+</style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+<div id="errorBox" class="alert alert-danger d-none"></div>
+
+<div class="d-flex justify-content-between align-items-center">
+<h2 class="page-title">📅 Quản lý lịch tư vấn</h2>
+<button class="btn btn-success" onclick="openAddModal()">+ Tạo lịch</button>
+</div>
+
+<table class="table table-bordered table-striped mt-4">
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Học sinh</th>
+<th>Tư vấn viên</th>
+<th>Thời gian</th>
+<th>Trạng thái</th>
+<th width="160">Hành động</th>
+</tr>
+</thead>
+<tbody id="scheduleTableBody"></tbody>
+</table>
+</div>
+
+<!-- MODAL TẠO -->
+<div class="modal fade" id="addModal">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5>Tạo lịch tư vấn</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<label>ID Học sinh</label>
+<input id="addStudentId" type="number" class="form-control">
+
+<div id="adminCounselorBox" class="mt-2 d-none">
+<label>ID Tư vấn viên</label>
+<input id="addCounselorId" type="number" class="form-control">
+</div>
+
+<label class="mt-2">Thời gian</label>
+<input id="addBookingTime" type="datetime-local" class="form-control">
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+<button class="btn btn-success" onclick="createSchedule()">Lưu</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- MODAL STATUS -->
+<div class="modal fade" id="statusModal">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5>Cập nhật trạng thái</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<input type="hidden" id="statusId">
+<select id="editStatus" class="form-control">
+<option value="Approved">Approved</option>
+<option value="Rejected">Rejected</option>
+<option value="Completed">Completed</option>
+</select>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+<button class="btn btn-primary" onclick="updateStatus()">Cập nhật</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="modal fade" id="deleteModal">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header bg-danger text-white">
+<h5>Xác nhận xóa</h5>
+</div>
+
+<div class="modal-body">
+ID: <strong id="deleteScheduleIdText"></strong>
+<input type="hidden" id="deleteId">
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+<button class="btn btn-danger" onclick="deleteSchedule()">Xóa</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const BASE = "http://localhost:5086/api/counselor";
+const STUDENT_API = "http://localhost:5086/api/student";
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
+const counselorId = localStorage.getItem("counselorId");
+
+// ===== MAP LƯU TÊN =====
+let counselorMap = {};
+let studentMap = {};
+
+// ===== ADMIN UI =====
+if (role === "Admin") {
+    document.getElementById("adminCounselorBox")?.classList.remove("d-none");
+}
+
+// ================= LOAD COUNSELORS =================
+async function loadCounselors() {
+    if (role !== "Admin") return;
+
+    const res = await fetch(BASE, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    counselorMap = {};
+    data.forEach(c => counselorMap[c.counselorId] = c.fullName);
+}
+
+// ================= LOAD STUDENTS =================
+async function loadStudents() {
+    const res = await fetch(STUDENT_API, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    studentMap = {};
+    data.forEach(s => studentMap[s.studentId] = s.fullName);
+}
+
+// ================= LOAD SCHEDULES =================
+async function loadSchedules() {
+    const url = role === "Admin"
+        ? "http://localhost:5086/api/schedule"
+        : `${BASE}/${counselorId}/schedules`;
+
+    const res = await fetch(url, {
+        headers: { Authorization:`Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+    let errorMsg = `❌ Lỗi ${res.status}`;
+
+    try {
+        // Ưu tiên lỗi dạng JSON { message: "..." }
+        const errorData = await res.json();
+        errorMsg += errorData.message
+            ? `: ${errorData.message}`
+            : `: ${JSON.stringify(errorData)}`;
+    } catch {
+        // Nếu không phải JSON → đọc text
+        const text = await res.text();
+        if (text) errorMsg += `: ${text}`;
+    }
+
+    alert(errorMsg);
+    console.error("LoadSchedules Error:", errorMsg);
+    return;
+}
+
+
+    const data = await res.json();
+    const tbody = document.getElementById("scheduleTableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(s => {
+        const isAdmin = role === "Admin";
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${s.scheduleId}</td>
+
+            <td>👤 ${studentMap[s.studentId] ?? `Học sinh #${s.studentId}`}</td>
+
+            ${isAdmin ? `
+            <td>🧑‍🏫 ${counselorMap[s.counselorId] ?? `Counselor #${s.counselorId}`}</td>
+            ` : ``}
+
+            <td>${s.bookingTime.replace("T"," ")}</td>
+
+            <td><strong>${s.status}</strong></td>
+
+            <td>
+                <span class="action-btn btn-status"
+                      onclick="openStatusModal(${s.scheduleId})">
+                      Trạng thái
+                </span>
+
+                ${isAdmin ? `
+                <span class="action-btn btn-delete"
+                      onclick="openDeleteModal(${s.scheduleId})">
+                      Xóa
+                </span>
+                ` : ``}
+            </td>
+        </tr>`;
+    });
+}
+
+// ================= MODAL & ACTIONS =================
+function openAddModal() {
+    if (role !== "Admin") return;
+    new bootstrap.Modal(addModal).show();
+}
+
+async function createSchedule() {
+    const schedule = {
+        studentId: +addStudentId.value,
+        counselorId: +addCounselorId.value,
+        bookingTime: addBookingTime.value,
+        status: "pending"
+    };
+
+    await fetch(`${BASE}/schedule`, {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json",
+            Authorization:`Bearer ${token}`
+        },
+        body: JSON.stringify(schedule)
+    });
+
+    loadSchedules();
+    bootstrap.Modal.getInstance(addModal).hide();
+}
+
+function openStatusModal(id){
+    statusId.value = id;
+    new bootstrap.Modal(statusModal).show();
+}
+
+async function updateStatus(){
+    await fetch(`${BASE}/schedule/${statusId.value}/status?status=${editStatus.value}`,{
+        method:"PUT",
+        headers:{ Authorization:`Bearer ${token}` }
+    });
+
+    loadSchedules();
+    bootstrap.Modal.getInstance(statusModal).hide();
+}
+
+function openDeleteModal(id){
+    if (role !== "Admin") return;
+    deleteId.value = id;
+    deleteScheduleIdText.innerText = id;
+    new bootstrap.Modal(deleteModal).show();
+}
+
+async function deleteSchedule(){
+    await fetch(`${BASE}/schedule/${deleteId.value}`,{
+        method:"DELETE",
+        headers:{ Authorization:`Bearer ${token}` }
+    });
+
+    loadSchedules();
+    bootstrap.Modal.getInstance(deleteModal).hide();
+}
+
+// ================= INIT =================
+(async () => {
+    await loadCounselors();
+    await loadStudents();
+    await loadSchedules();
+})();
+</script>
+
+
+
+</body>
+</html>

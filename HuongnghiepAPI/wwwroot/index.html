@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Hệ thống tư vấn ngành Đại Học cho học sinh THPT</title>
+
+<style>
+/* ================== RESET ================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Roboto, Arial;
+    color: #222;
+    background: #f7f9fc;
+}
+
+/* ================== NAVBAR ================== */
+nav {
+    width: 100%;
+    padding: 18px 80px;
+    background: #00bcd4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+nav .logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+}
+
+nav ul {
+    display: flex;
+    gap: 40px;                 /* giãn 3 mục cho đều */
+    list-style: none;
+
+    flex: 1;                   /* chiếm toàn bộ khoảng giữa */
+    justify-content: center;   /* căn giữa thật */
+}
+
+
+nav ul li {
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.2s;
+    position: relative;
+}
+
+nav ul li:hover { opacity: 0.85; }
+nav .logo {
+    min-width: 200px;
+}
+
+#accountBox {
+    min-width: 220px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+/* Dropdowns */
+.dropdown-parent { position: relative; cursor: pointer; }
+.dropdown-parent .dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    list-style: none;
+    padding: 8px 0;
+    min-width: 180px;
+}
+.dropdown-menu li {
+    padding: 8px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: black;
+}
+.dropdown-parent:hover .dropdown-menu { display: block; }
+.dropdown-menu li:hover { background: #f2f2f2; }
+
+/* ACCOUNT BOX */
+#accountBox {
+    color: white;
+    font-weight: 500;
+}
+#logoutBtn {
+    padding: 4px 10px;
+    background: #ff4444;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* ================== HERO ================== */
+.hero {
+    margin-top: 90px;
+    background: url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600") center/cover no-repeat;
+    height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 10%;
+    color: white;
+    position: relative;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 110, 120, 0.88),
+        rgba(0, 150, 160, 0.75)
+    );
+}
+
+
+
+
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+    animation: fadeUp 1.5s ease forwards;
+    opacity: 0;
+    transform: translateY(25px);
+}
+
+.hero-content h1 {
+    font-size: 42px;
+    font-weight: bold;
+    line-height: 1.35;
+    margin-bottom: 15px;
+    text-shadow: 0 6px 20px rgba(0,0,0,0.45);
+}
+
+.hero-content p {
+    font-size: 19px;
+    max-width: 700px;
+    margin: auto;
+    opacity: 0.9;
+    text-shadow: 0 6px 20px rgba(0,0,0,0.45);
+}
+
+@keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================== SERVICES ================== */
+.services {
+    padding: 60px 10%;
+    text-align: center;
+}
+
+.services h2 { font-size: 30px; margin-bottom: 18px; color: #222; }
+.services p { font-size: 17px; color: #555; margin-bottom: 35px; }
+
+.service-box {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #fff;
+    padding: 30px;
+    width: 290px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+}
+
+.card h3 { margin-bottom: 12px; color:#007bff; }
+.card p { color:#444; font-size: 15px; line-height: 1.45; }
+
+.start-btn {
+    margin-top: 30px;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #27d8e0, #18b6bf);
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    color: #003b40;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 8px 24px rgba(0, 180, 190, 0.35);
+}
+
+.start-btn:hover {
+    background: linear-gradient(135deg, #18b6bf, #10a5ad);
+    transform: scale(1.06);
+    box-shadow: 0 12px 30px rgba(0, 180, 190, 0.5);
+}
+
+.notification-icon {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: 22px;
+    user-select: none;
+}
+
+/* Chuông */
+.notification-icon .bell:hover {
+    transform: scale(1.1);
+}
+
+/* Badge số thông báo */
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+
+    min-width: 20px;
+    text-align: center;
+}
+.notification-wrapper {
+    position: relative;
+    margin-right: 20px;
+}
+
+.notification-icon {
+    cursor: pointer;
+    font-size: 22px;
+    position: relative;
+}
+
+.notification-icon .badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: red;
+    color: white;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 50%;
+}
+
+.notification-dropdown {
+    width: 290px;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    display: none;
+    z-index: 999;
+}
+
+.notification-dropdown .title {
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.notification-dropdown .list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notification-dropdown .item {
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+}
+
+.notification-dropdown .item.unread {
+    background: #e4f3ff;
+    font-weight: bold;
+}
+
+.notification-dropdown .item:last-child {
+    border-bottom: none;
+}
+.notif-read {
+    opacity: 0.55;
+}
+
+.notif-unread {
+    font-weight: bold;
+}
+.menu-group-title {
+    font-weight: bold;
+    color: #007bff;
+    padding: 8px 15px;
+    margin-top: 6px;
+    border-top: 1px solid #eee;
+    pointer-events: none;
+    opacity: 0.85;
+}
+/* ================== ACCOUNT STATUS (SIMPLE) ================== */
+.account-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.account-status i {
+    font-size: 18px;
+}
+
+.account-role {
+    opacity: 0.85;
+    font-size: 14px;
+}
+
+.logout-icon {
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+.logout-icon:hover {
+    transform: scale(1.15);
+    opacity: 0.9;
+}
+.test-section {
+    padding: 70px 10%;
+    background: #eef6f6;
+}
+
+.test-container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.test-image img {
+    width: 260px;
+}
+
+.test-content {
+    flex: 1;
+}
+
+.test-content h2 {
+    color: #0097a7;
+    font-size: 26px;
+    margin-bottom: 18px;
+}
+
+.test-content ul {
+    margin-bottom: 25px;
+}
+
+.test-content ul li {
+    font-size: 16px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+.benefit-section {
+    padding: 70px 10%;
+    background: #fff;
+    text-align: center;
+}
+
+.benefit-section h2 {
+    color: #0097a7;
+    margin-bottom: 45px;
+    font-size: 26px;
+}
+
+.benefit-box {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.benefit-card {
+    background: #fff;
+    width: 300px;
+    padding: 30px 20px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.benefit-icon {
+    width: 80px;
+    height: 80px;
+    background: #1bbfc7;
+    color: white;
+    border-radius: 50%;
+    font-size: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.benefit-card {
+    background: #fff;
+    width: 300px;
+    padding: 30px 20px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+/* 👇 HIỆU ỨNG HOVER */
+.benefit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+}
+
+
+.section-title {
+    color: #0097a7;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.section-desc {
+    color: #444;
+    margin-bottom: 40px;
+}
+
+
+
+/* ===== SECTION ===== */
+.counselor-section {
+    padding: 70px 8%;
+    background: #eaf7f7;
+    text-align: center;
+}
+
+/* ===== SLIDER ===== */
+.counselor-slider {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+#counselorList {
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+/* ===== CARD ===== */
+.counselor-card {
+    flex: 0 0 25%; /* 4 card / màn */
+    padding: 18px;
+    box-sizing: border-box;
+}
+
+.counselor-card-inner {
+    background: #ffffff;
+    border-radius: 26px;                 /* bo góc lớn */
+    padding: 18px 18px 22px;
+    height: 100%;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+    transition: all 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.counselor-card-inner:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+}
+
+/* ===== IMAGE ===== */
+.counselor-img {
+    width: 100%;
+    height: 260px;                       /* cao hơn → giống hình 2 */
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 18px;
+}
+
+/* ===== NAME ===== */
+.counselor-card h5 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0aa5a5;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+/* ===== BUTTON ===== */
+.btn-profile {
+    margin-top: auto;                   /* đẩy nút xuống đáy */
+    width: 100%;
+    border-radius: 999px;               /* bo tròn full */
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 700;
+    background: #14b8b8;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
+     text-decoration: none;
+}
+
+.btn-profile:hover {
+    background: #0e8f8f;
+    transform: scale(1.03);
+}
+
+.slider-dots {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b5dcdc;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.slider-dot.active {
+    background: #000;
+    transform: scale(1.2);
+}
+/* ===== CONTACT ===== */
+.contact-section {
+    padding: 80px 10%;
+    background: #ffffff;
+}
+
+.contact-box {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.contact-item {
+    width: 280px;
+    text-align: center;
+    background: #f5fbfb;
+    padding: 30px 20px;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    transition: 0.3s ease;
+}
+
+.contact-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.contact-item i {
+    font-size: 34px;
+    color: #00a6a6;
+    margin-bottom: 14px;
+}
+
+.contact-item h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #007b83;
+}
+
+.contact-item p {
+    font-size: 15px;
+    color: #444;
+}
+.section-title-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+
+    font-size: 28px;
+    font-weight: 700;
+    color: #0097a7;              /* xanh chuẩn toàn site */
+    text-transform: uppercase;
+    margin: 60px 0 40px;
+}
+
+/* gạch 2 bên */
+.section-title-line::before,
+.section-title-line::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: #bfe7ea;        /* xanh nhạt đồng bộ */
+}
+
+
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================ -->
+<nav>
+    <div class="logo" onclick="window.location.href='index.html'">🎓 Love Future</div>
+
+    <ul>
+        <li onclick="location.href='index.html'">Trang chủ</li>
+
+        <!-- 🔹 Menu Dịch vụ (dành cho học sinh) -->
+        <li class="dropdown-parent student-only">
+            Dịch vụ ▾
+            <ul class="dropdown-menu">
+                <li onclick="goToConsult()">Tư vấn định hướng</li>
+                <li onclick="window.location.href='pages/students/major-info.html'">Bách khoa ngành</li>
+            </ul>
+        </li>
+
+        <!-- 🔹 Menu Quản trị hệ thống (chỉ Admin thấy) -->
+<li class="dropdown-parent admin-only" style="display:none;">
+    Quản trị hệ thống ▾
+    <ul class="dropdown-menu">
+
+        <li class="menu-group-title">Quản lý câu hỏi</li>
+        <li onclick="goToGroup()">Quản lý nhóm câu hỏi</li>
+        <li onclick="goToQuestions()">Quản lý câu hỏi</li>
+        <li onclick="goToAnswers()">Quản lý đáp án</li>
+
+        <li class="menu-group-title">Tư vấn</li>
+        <!-- Thêm class để ẩn cho tư vấn viên -->
+        <li class="menu-counselor-only-admin" onclick="goToCounselor()">Quản lý tư vấn viên</li>
+
+        <li onclick="goToSchedule()">Quản lý lịch tư vấn</li>
+
+        <li class="menu-group-title">Thông tin ngành & tố chất</li>
+        <li onclick="goToMajors()">Quản lý ngành</li>
+        <li onclick="goToTraits()">Quản lý tố chất</li>
+
+    </ul>
+</li>
+
+
+        <li onclick="scrollToContact()">Liên hệ</li>
+
+    </ul>
+
+   <!-- 🔔 Icon thông báo
+<div id="notificationIcon" class="notification-icon" onclick="openNotificationPanel()">
+    <span class="bell">🔔</span>
+    <span id="notifBadge" class="notif-badge d-none">0</span>
+</div>
+-->
+
+
+    <!-- 🔵 Ô trạng thái đăng nhập -->
+    <div id="accountBox"></div>
+</nav>
+
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>“Chọn ngành đúng — đi đúng đường tương lai”</h1>
+        <p>Chỉ với 5 phút, chúng tôi sẽ phân tích tính cách & thế mạnh của bạn để gợi ý ngành học phù hợp nhất.</p>
+        <br>
+        <button class="start-btn" id="startConsultBtn">🚀 Bắt đầu tư vấn ngay</button>
+    </div>
+</section>
+
+
+<section class="test-section student-only-section">
+    <div class="test-container">
+
+        <!-- BÊN TRÁI: HÌNH / ICON -->
+        <div class="test-image">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Trắc nghiệm">
+        </div>
+
+        <!-- BÊN PHẢI: NỘI DUNG -->
+        <div class="test-content">
+            <h2>Trắc nghiệm chọn ngành giúp bạn...</h2>
+            <ul>
+                <li>Đánh giá tình trạng của bản thân trong việc chọn ngành, chọn trường</li>
+                <li>Trả lời câu hỏi: “Mình có cần được tư vấn chọn ngành không?”</li>
+                <li>Nhận các gợi ý khoa học cho hành trình tiếp theo</li>
+            </ul>
+
+            <button class="start-btn" onclick="goToConsult()">
+                🚀 Thực hiện trắc nghiệm ngay
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<section class="benefit-section student-only-section">
+    <h2 class="section-title-line">
+        Bạn nhận được gì khi đăng ký dịch vụ tư vấn
+    </h2>
+
+    <div class="benefit-box">
+
+        <div class="benefit-card">
+            <div class="benefit-icon">👥</div>
+            <h3>Chọn chuyên viên phù hợp</h3>
+            <p>Có cơ hội trò chuyện miễn phí 15 phút với chuyên gia tư vấn.</p>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">🛡️</div>
+            <h3>Chất lượng đảm bảo</h3>
+            <p>Dữ liệu tư vấn khoa học, lộ trình rõ ràng, cá nhân hóa.</p>
+        </div>
+
+        <div class="benefit-card">
+            <div class="benefit-icon">⏱️</div>
+            <h3>Hỗ trợ nhanh chóng</h3>
+            <p>Phản hồi và sắp lịch tư vấn trong vòng 48 giờ.</p>
+        </div>
+
+    </div>
+</section>
+
+
+
+<section class="services admin-dashboard">
+    <h2>📊 Bảng điều khiển quản lý</h2>
+    <p>Quản lý toàn bộ hệ thống: câu hỏi, tư vấn viên, ngành nghề, tố chất và lịch hẹn.</p>
+
+    <div class="service-box">
+
+        <!-- Nhóm: Quản lý câu hỏi -->
+        <div class="card" onclick="goToGroup()">
+            <h3>🗂️ Quản lý nhóm câu hỏi</h3>
+            <p>Thêm, sửa, xoá và phân loại các nhóm câu hỏi trắc nghiệm.</p>
+        </div>
+
+        <div class="card" onclick="goToQuestions()">
+            <h3>❓ Quản lý câu hỏi</h3>
+            <p>Xây dựng bộ câu hỏi để phân tích tính cách & định hướng nghề nghiệp.</p>
+        </div>
+
+        <div class="card" onclick="goToAnswers()">
+            <h3>✔️ Quản lý đáp án</h3>
+            <p>Quản lý các đáp án và điểm số để hệ thống tính toán chính xác.</p>
+        </div>
+
+        <!-- Nhóm: Tư vấn -->
+        <!-- Thêm class để ẩn -->
+        <div class="card card-counselor-only-admin" onclick="goToCounselor()">
+            <h3>👥 Quản lý tư vấn viên</h3>
+            <p>Thêm – sửa – xoá thông tin các chuyên gia tư vấn.</p>
+        </div>
+
+        <div class="card" onclick="goToSchedule()">
+            <h3>📅 Quản lý lịch tư vấn</h3>
+            <p>Điều phối và sắp xếp lịch hẹn giữa học sinh và tư vấn viên.</p>
+        </div>
+
+        <!-- Nhóm ngành -->
+        <div class="card" onclick="goToMajors()">
+            <h3>📚 Quản lý ngành</h3>
+            <p>Thêm ngành nghề, cập nhật mô tả, chỉ số tính cách và lộ trình học tập.</p>
+        </div>
+
+        <div class="card" onclick="goToTraits()">
+            <h3>💡 Quản lý tố chất</h3>
+            <p>Quản lý các nhóm tố chất để gợi ý ngành phù hợp hơn.</p>
+        </div>
+
+    </div>
+</section>
+<section class="counselor-section student-only-section">
+    <h2 class="section-title-line">ĐỘI NGŨ TƯ VẤN</h2>
+    <p class="section-desc">
+        Bạn được lựa chọn chuyên viên theo nhu cầu và mong đợi của bạn.
+    </p>
+
+    <div class="counselor-slider">
+        <div class="counselor-track" id="counselorList"></div>
+        <div class="slider-dots" id="sliderDots"></div>
+
+
+    </div>
+</section>
+<section class="contact-section" id="contact">
+    <div class="section-title-line">
+        <h2>LIÊN HỆ</h2>
+    </div>
+
+    <div class="contact-box">
+        <div class="contact-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <h4>Địa chỉ</h4>
+            <p>Trường Đại học Hutech, TP. Hồ Chí Minh</p>
+        </div>
+
+        <div class="contact-item">
+            <i class="fa-solid fa-phone"></i>
+            <h4>Hotline</h4>
+            <p>0123 456 789</p>
+        </div>
+
+        <div class="contact-item">
+            <i class="fa-solid fa-envelope"></i>
+            <h4>Email</h4>
+            <p>lovefuture@gmail.com</p>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+// ==============================================
+// 🔐 HIỂN THỊ TRẠNG THÁI ĐĂNG NHẬP + PHÂN QUYỀN
+// ==============================================
+function renderLoginStatus() {
+    const token = localStorage.getItem("token");
+    const fullName = localStorage.getItem("fullName");
+    const role = localStorage.getItem("role");
+
+    const box = document.getElementById("accountBox");
+
+    // ===============================
+    // 🚫 CHƯA ĐĂNG NHẬP
+    // ===============================
+    if (!token || !fullName || !role) {
+        box.innerHTML = `
+            <a href="pages/students/login.html" class="btn-login">Đăng nhập</a>
+            <a href="pages/students/register.html" class="btn-register">Đăng ký</a>
+        `;
+        return;
+    }
+
+   let roleLabel = "";
+
+switch (role.toLowerCase()) {
+    case "admin":
+        roleLabel = "Quản trị viên";
+        break;
+    case "counselor":
+        roleLabel = "Chuyên viên tư vấn";
+        break;
+    default:
+        roleLabel = "Học sinh";
+}
+
+box.innerHTML = `
+    <div class="account-status">
+        <i class="fa-solid fa-user"></i>
+        <span>${fullName}</span>
+        <span class="account-role">(${roleLabel})</span>
+        <i class="fa-solid fa-right-from-bracket logout-icon" id="logoutBtn" title="Đăng xuất"></i>
+    </div>
+`;
+
+// 🔴 LOGOUT
+document.getElementById("logoutBtn").onclick = () => {
+    localStorage.clear();
+    location.reload();
+};
+}
+function applyRoleVisibility() {
+
+    const role = (localStorage.getItem("role") || "").toLowerCase();
+
+    const adminMenu = document.querySelector(".admin-only");
+    const studentMenu = document.querySelector(".student-only");
+
+    const adminDashboard = document.querySelector(".services.admin-dashboard");
+    const studentServices = document.querySelector(".services:not(.admin-dashboard)");
+
+    const counselorMenuItem = document.querySelector(".menu-counselor-only-admin");
+    const counselorCard = document.querySelector(".card-counselor-only-admin");
+    const notificationIcon = document.getElementById("notificationIcon");
+
+
+    // RESET mặc định
+    if (adminMenu) adminMenu.style.display = "none";
+    if (studentMenu) studentMenu.style.display = "block";
+
+    if (adminDashboard) adminDashboard.style.display = "none";
+    if (studentServices) studentServices.style.display = "block";
+
+    if (counselorMenuItem) counselorMenuItem.style.display = "block";
+    if (counselorCard) counselorCard.style.display = "flex";
+
+    // -----------------------------------------
+    // 1️⃣ HỌC SINH
+    // -----------------------------------------
+    if (role === "student" || role === "") {
+
+        if (studentMenu) studentMenu.style.display = "block";
+
+        if (adminMenu) adminMenu.style.display = "none";
+        if (adminDashboard) adminDashboard.style.display = "none";
+         if (notificationIcon) notificationIcon.style.display = "flex";
+    
+
+        return;
+    }
+
+    // -----------------------------------------
+    // 2️⃣ TƯ VẤN VIÊN
+    // -----------------------------------------
+    if (role === "counselor") {
+
+        // ẨN menu dịch vụ học sinh
+        if (studentMenu) studentMenu.style.display = "none";
+
+        // ẨN dịch vụ học sinh ở giữa trang
+        if (studentServices) studentServices.style.display = "none";
+
+        // HIỆN dashboard tư vấn viên
+        if (adminDashboard) adminDashboard.style.display = "block";
+
+        // HIỆN menu quản trị hệ thống
+        if (adminMenu) adminMenu.style.display = "block";
+
+        // ẨN “Quản lý tư vấn viên”
+        if (counselorMenuItem) counselorMenuItem.style.display = "none";
+        if (counselorCard) counselorCard.style.display = "none";
+         if (notificationIcon) notificationIcon.style.display = "none";
+
+        return;
+    }
+
+    // -----------------------------------------
+    // 3️⃣ QUẢN TRỊ VIÊN
+    // -----------------------------------------
+    if (role === "admin") {
+
+        // ẨN menu dịch vụ
+        if (studentMenu) studentMenu.style.display = "none";
+
+        if (adminMenu) adminMenu.style.display = "block";
+
+        if (adminDashboard) adminDashboard.style.display = "block";
+
+        if (studentServices) studentServices.style.display = "none";
+        if (notificationIcon) notificationIcon.style.display = "none";
+
+        return;
+    }
+}
+function applyHeroButtonVisibility() {
+    const role = (localStorage.getItem("role") || "").toLowerCase();
+    const startBtn = document.getElementById("startConsultBtn");
+
+    if (!startBtn) return;
+
+    // ❌ Ẩn nếu là admin hoặc tư vấn viên
+    if (role === "admin" || role === "counselor") {
+        startBtn.style.display = "none";
+    } else {
+        startBtn.style.display = "inline-block";
+    }
+}
+function applyStudentOnlySectionsVisibility() {
+    const role = (localStorage.getItem("role") || "").toLowerCase();
+    const sections = document.querySelectorAll(".student-only-section");
+
+    sections.forEach(section => {
+        // ❌ Ẩn nếu là admin hoặc counselor
+        if (role === "admin" || role === "counselor") {
+            section.style.display = "none";
+        } 
+        // ✅ Hiện cho học sinh hoặc chưa đăng nhập
+        else {
+            section.style.display = "block";
+        }
+    });
+}
+
+function scrollToContact() {
+    const section = document.getElementById("contact");
+    if (!section) return;
+
+    section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+
+
+
+// ================================
+// 📌 Nhóm câu hỏi
+// ================================
+function goToGroup() {
+    window.location.href = "pages/questiongroups/question-group.html";
+}
+
+function goToQuestions() {
+    window.location.href = "pages/questions/questions.html";
+}
+
+function goToAnswers() {
+    window.location.href = "pages/answers/answers.html";
+}
+
+// ================================
+// 📌 Tư vấn viên
+// ================================
+function goToCounselor() {
+    window.location.href = "pages/counselors/counselors.html";
+}
+
+function goToSchedule() {
+    window.location.href = "pages/schedule/schedule-manager.html";
+}
+
+// ================================
+// 📌 Ngành & Tố chất
+// ================================
+function goToMajors() {
+    window.location.href = "pages/majors/majors.html";
+}
+
+function goToTraits() {
+    window.location.href = "pages/traits/traits.html";
+}
+
+
+// ==============================================
+// 🎓 KIỂM TRA TRƯỚC KHI VÀO TƯ VẤN ĐỊNH HƯỚNG
+// ==============================================
+function goToConsult() {
+    const token = localStorage.getItem("token");
+    const role  = localStorage.getItem("role");
+
+    // ❌ Chưa đăng nhập
+    if (!token || !role) {
+        alert("⚠️ Bạn cần đăng nhập để sử dụng tư vấn định hướng");
+        window.location.href = "pages/students/login.html";
+        return;
+    }
+
+    // ✅ Sinh viên
+    if (role === "student") {
+        window.location.href = "pages/students/start-test.html";
+        return;
+    }
+
+    // ⛔ Vai trò khác
+    alert("⛔ Chỉ tài khoản HỌC SINH mới được sử dụng chức năng này");
+}
+// ==============================================
+// 🔔 1. TẢI SỐ THÔNG BÁO CHƯA ĐỌC
+// ==============================================
+async function loadUnreadNotifications() {
+    const studentId = localStorage.getItem("studentId");
+    const badge = document.getElementById("notifBadge");
+
+    if (!studentId) {
+        badge.classList.add("d-none");
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:5086/api/notification/${studentId}`);
+        const data = await res.json();
+
+        const unread = data.filter(n => !n.isRead).length;
+
+        if (unread > 0) {
+            badge.innerText = unread;
+            badge.classList.remove("d-none");
+        } else {
+            badge.classList.add("d-none");
+        }
+    } catch (err) {
+        console.error("Lỗi tải thông báo:", err);
+    }
+}
+
+// ==============================================
+// 📬 MỞ BẢNG THÔNG BÁO
+// ==============================================
+async function openNotificationPanel() {
+    const studentId = localStorage.getItem("studentId");
+
+    if (!studentId) {
+        alert("⚠ Bạn cần đăng nhập để xem thông báo!");
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:5086/api/notification/${studentId}`);
+        const list = await res.json();
+
+        if (list.length === 0) {
+            alert("📭 Bạn chưa có thông báo nào");
+            return;
+        }
+
+        let html = "📬 THÔNG BÁO:\n\n";
+        for (let n of list) {
+            html += `• ${n.message} (${new Date(n.createdAt).toLocaleString()})\n`;
+        }
+
+        alert(html);
+
+        // Sau khi mở bảng → đánh dấu tất cả là đã đọc
+        markAllAsRead(studentId);
+
+    } catch (err) {
+        console.error("Lỗi mở panel thông báo:", err);
+    }
+}
+
+
+// ==============================================
+// ✔ ĐÁNH DẤU ĐÃ ĐỌC
+// ==============================================
+async function markAllAsRead(studentId) {
+    try {
+        await fetch(`http://localhost:5086/api/notification/mark-read/${studentId}`, {
+            method: "PUT"
+        });
+
+        // Cập nhật lại badge
+        loadUnreadNotifications();
+
+    } catch (err) {
+        console.error("Lỗi đánh dấu đã đọc:", err);
+    }
+} 
+
+
+
+
+// ==============================================
+// 🚀 NÚT “BẮT ĐẦU TƯ VẤN NGAY”
+// ==============================================
+document.getElementById("startConsultBtn").onclick = function () {
+
+    const token = localStorage.getItem("token");
+    const role  = localStorage.getItem("role");
+
+    // ❌ Chưa đăng nhập
+    if (!token || !role) {
+        alert("⚠️ Bạn cần đăng nhập trước khi làm bài tư vấn");
+        window.location.href = "pages/students/login.html";
+        return;
+    }
+
+    // ✅ Sinh viên → vào thẳng bài test
+    if (role === "student") {
+        window.location.href = "pages/students/start-test.html";
+        return;
+    }
+
+    // ⛔ Trường hợp role khác
+    alert("⛔ Chỉ tài khoản HỌC SINH mới được làm bài tư vấn");
+};
+
+
+// ==============================================
+// 🚀 CHẠY KHI LOAD TRANG
+// ==============================================
+window.onload = function() {
+    renderLoginStatus();
+    applyRoleVisibility();
+    loadUnreadNotifications();
+    applyHeroButtonVisibility();
+    applyStudentOnlySectionsVisibility();
+};
+</script>
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  intent="WELCOME"
+  chat-title="AIhuongnghiep"
+  agent-id="a5b11785-b24d-41d7-af4e-b16d69c563c3"
+  language-code="en"
+></df-messenger>
+<script>
+const API_BASE = "http://localhost:5086/api/Counselor";
+
+let currentSlide = 0;
+let totalSlides = 0;
+let slideInterval;
+
+const visibleCount = 4;
+const slideDelay = 3500;
+
+/* ================= LOAD DATA ================= */
+async function loadCounselors() {
+    const res = await fetch(API_BASE);
+    const data = await res.json();
+
+    const track = document.getElementById("counselorList");
+    track.innerHTML = "";
+
+    data.forEach(c => {
+        const imgUrl = c.imageUrl
+            ? `http://localhost:5086${c.imageUrl}`
+            : "";
+
+        track.innerHTML += `
+            <div class="counselor-card">
+                <div class="counselor-card-inner text-center">
+                    ${imgUrl ? `<img src="${imgUrl}" class="counselor-img">` : ""}
+                    <h5>${c.fullName}</h5>
+                    <a href="/pages/schedule/profile.html?id=${c.counselorId}"
+                       class="btn btn-profile">
+                        HỒ SƠ CHUYÊN VIÊN
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+
+    totalSlides = Math.ceil(data.length / visibleCount);
+    currentSlide = 0;
+
+    renderDots();
+    updateDots();
+
+    setTimeout(startAutoSlide, 300);
+}
+
+/* ================= DOTS ================= */
+function renderDots() {
+    const dotsContainer = document.getElementById("sliderDots");
+    dotsContainer.innerHTML = "";
+
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement("div");
+        dot.className = "slider-dot";
+
+        dot.addEventListener("click", () => {
+            currentSlide = i;
+            moveSlide();
+            resetAutoSlide();
+        });
+
+        dotsContainer.appendChild(dot);
+    }
+}
+
+function updateDots() {
+    document.querySelectorAll(".slider-dot").forEach((dot, index) => {
+        dot.classList.toggle("active", index === currentSlide);
+    });
+}
+
+/* ================= SLIDE ================= */
+function moveSlide() {
+    const track = document.getElementById("counselorList");
+
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    updateDots();
+}
+
+function startAutoSlide() {
+    const track = document.getElementById("counselorList");
+    if (!track) return;
+
+    slideInterval = setInterval(() => {
+        currentSlide++;
+
+        if (currentSlide >= totalSlides) {
+            // 🔁 reset mượt về đầu
+            track.style.transition = "none";
+            track.style.transform = "translateX(0%)";
+            currentSlide = 0;
+
+            updateDots();
+
+            track.offsetHeight; // force reflow
+            track.style.transition = "transform 0.6s ease";
+            return;
+        }
+
+        moveSlide();
+    }, slideDelay);
+}
+
+function resetAutoSlide() {
+    clearInterval(slideInterval);
+    startAutoSlide();
+}
+
+/* ================= START ================= */
+loadCounselors();
+</script>
+
+
+
+</body>
+</html>

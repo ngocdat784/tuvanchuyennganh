@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý ngành</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f6f8fa;
+        }
+        .page-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        .action-btn {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .btn-edit { background: #0d6efd; }
+        .btn-delete { background: #dc3545; }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="page-title">🎓 Quản lý ngành</h2>
+        <button class="btn btn-success" onclick="openAddModal()">+ Thêm ngành</button>
+    </div>
+
+    <!-- ==================== BẢNG DANH SÁCH NGÀNH ==================== -->
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 60px;">ID</th>
+                <th>Tên ngành</th>
+                <th>Mô tả</th>
+                <th style="width: 140px;">Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="majorTableBody">
+            <!-- Render từ JS -->
+        </tbody>
+    </table>
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- 🟢 MODAL THÊM NGÀNH -->
+<!-- ========================================================= -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm ngành mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <label class="form-label">Tên ngành</label>
+                <input id="addName" class="form-control">
+
+                <label class="form-label mt-2">Mô tả</label>
+                <textarea id="addDescription" class="form-control"></textarea>
+
+                <label class="form-label mt-2">Chi tiết</label>
+                <textarea id="addDetails" class="form-control" placeholder="Thông tin chi tiết ngành..."></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button class="btn btn-success" onclick="createMajor()">Lưu</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- 🔵 MODAL SỬA NGÀNH -->
+<!-- ========================================================= -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa ngành</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="editId">
+
+                <label class="form-label">Tên ngành</label>
+                <input id="editName" class="form-control">
+
+                <label class="form-label mt-2">Mô tả</label>
+                <textarea id="editDescription" class="form-control"></textarea>
+
+                <label class="form-label mt-2">Chi tiết</label>
+                <textarea id="editDetails" class="form-control"></textarea>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button class="btn btn-primary" onclick="updateMajor()">Cập nhật</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- 🔴 MODAL XÓA NGÀNH -->
+<!-- ========================================================= -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Xác nhận xóa ngành</h5>
+            </div>
+
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa ngành này?</p>
+                <strong id="deleteMajorName"></strong>
+                <input id="deleteId" type="hidden">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button class="btn btn-danger" onclick="deleteMajor()">Xóa</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+const API = "http://localhost:5086/api/major";
+
+
+// ========================= LOAD DANH SÁCH NGÀNH =========================
+async function loadMajors() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const tbody = document.getElementById("majorTableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(m => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${m.majorId}</td>
+                <td>${m.name}</td>
+                <td>${m.description ?? ""}</td>
+                <td>
+                    <span class="action-btn btn-edit" onclick="openEditModal(${m.majorId})">Sửa</span>
+                    <span class="action-btn btn-delete" onclick="openDeleteModal(${m.majorId}, '${m.name}')">Xóa</span>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+loadMajors();
+
+
+
+// ============================= THÊM MAJOR =============================
+function openAddModal() {
+    new bootstrap.Modal(document.getElementById("addModal")).show();
+}
+
+async function createMajor() {
+    const major = {
+        name: document.getElementById("addName").value,
+        description: document.getElementById("addDescription").value,
+        details: document.getElementById("addDetails").value
+    };
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(major)
+    });
+
+    loadMajors();
+    bootstrap.Modal.getInstance(document.getElementById("addModal")).hide();
+}
+
+
+
+// ============================= SỬA MAJOR =============================
+async function openEditModal(id) {
+    const res = await fetch(`${API}/${id}`);
+    const m = await res.json();
+
+    document.getElementById("editId").value = m.majorId;
+    document.getElementById("editName").value = m.name;
+    document.getElementById("editDescription").value = m.description ?? "";
+    document.getElementById("editDetails").value = m.details ?? "";
+
+    new bootstrap.Modal(document.getElementById("editModal")).show();
+}
+
+async function updateMajor() {
+    const id = document.getElementById("editId").value;
+
+    const updated = {
+        name: document.getElementById("editName").value,
+        description: document.getElementById("editDescription").value,
+        details: document.getElementById("editDetails").value
+    };
+
+    await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated)
+    });
+
+    loadMajors();
+    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+}
+
+
+
+// ============================= XÓA MAJOR =============================
+function openDeleteModal(id, name) {
+    document.getElementById("deleteId").value = id;
+    document.getElementById("deleteMajorName").innerText = name;
+
+    new bootstrap.Modal(document.getElementById("deleteModal")).show();
+}
+
+async function deleteMajor() {
+    const id = document.getElementById("deleteId").value;
+
+    await fetch(`${API}/${id}`, { method: "DELETE" });
+
+    loadMajors();
+    bootstrap.Modal.getInstance(document.getElementById("deleteModal")).hide();
+}
+
+</script>
+
+</body>
+</html>

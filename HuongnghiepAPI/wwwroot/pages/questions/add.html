@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm câu hỏi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f6f8fa;
+        }
+        .form-box {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="form-box">
+        <h2 class="page-title mb-4">➕ Thêm câu hỏi</h2>
+
+        <div id="alertBox"></div>
+
+        <!-- Nội dung câu hỏi -->
+        <div class="mb-3">
+            <label class="form-label">Nội dung câu hỏi</label>
+            <textarea id="textInput" class="form-control" placeholder="Nhập nội dung câu hỏi"></textarea>
+        </div>
+
+        <!-- Nhóm câu hỏi -->
+        <div class="mb-3">
+            <label class="form-label">Nhóm câu hỏi</label>
+            <select id="groupSelect" class="form-control">
+                <option value="">-- Chọn nhóm --</option>
+            </select>
+        </div>
+
+        <!-- Thứ tự -->
+        <div class="mb-3">
+            <label class="form-label">Thứ tự hiển thị</label>
+            <input id="orderInput" type="number" class="form-control" placeholder="0 - 100">
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button class="btn btn-secondary" onclick="goBack()">← Quay lại</button>
+            <button class="btn btn-success" onclick="createQuestion()">Lưu câu hỏi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_QUESTION = "http://localhost:5086/api/questions";
+const API_GROUP = "http://localhost:5086/api/questiongroup";
+
+// =======================================
+// HIỂN THỊ THÔNG BÁO
+// =======================================
+function showAlert(message, type = "success") {
+    document.getElementById("alertBox").innerHTML = `
+        <div class="alert alert-${type}">${message}</div>
+    `;
+}
+
+// =======================================
+// TẢI DANH SÁCH NHÓM
+// =======================================
+async function loadGroups() {
+    try {
+        const res = await fetch(API_GROUP);
+        const data = await res.json();
+
+        const groupSelect = document.getElementById("groupSelect");
+
+        data.forEach(g => {
+            const opt = document.createElement("option");
+            opt.value = g.questionGroupId;
+            opt.textContent = g.title;
+            groupSelect.appendChild(opt);
+        });
+
+    } catch (error) {
+        console.error(error);
+        showAlert("Không tải được danh sách nhóm!", "danger");
+    }
+}
+loadGroups();
+
+// =======================================
+// TẠO CÂU HỎI MỚI
+// =======================================
+async function createQuestion() {
+    const text = document.getElementById("textInput").value.trim();
+    const order = Number(document.getElementById("orderInput").value);
+    const groupId = document.getElementById("groupSelect").value;
+
+    if (!text) return showAlert("Nội dung câu hỏi không được để trống!", "danger");
+    if (!groupId) return showAlert("Bạn phải chọn nhóm câu hỏi!", "danger");
+
+    const body = {
+        text: text,
+        order: order,
+        questionGroupId: Number(groupId)
+    };
+
+    try {
+        const res = await fetch(API_QUESTION, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+            showAlert("Thêm câu hỏi thất bại!", "danger");
+            return;
+        }
+
+        showAlert("Thêm câu hỏi thành công!", "success");
+
+        setTimeout(() => {
+            window.location.href = "questions.html";
+        }, 1000);
+
+    } catch (err) {
+        console.error(err);
+        showAlert("Không kết nối được API!", "danger");
+    }
+}
+
+// =======================================
+// QUAY LẠI DANH SÁCH
+// =======================================
+function goBack() {
+    window.location.href = "questions.html";
+}
+</script>
+
+</body>
+</html>

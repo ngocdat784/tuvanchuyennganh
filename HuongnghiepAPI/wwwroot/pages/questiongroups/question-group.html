@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý nhóm câu hỏi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f6f8fa;
+        }
+        .page-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        .action-btn {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .btn-edit { background: #0d6efd; }
+        .btn-delete { background: #dc3545; }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="page-title">📚 Quản lý nhóm câu hỏi</h2>
+
+        <button class="btn btn-success" onclick="openAddModal()">+ Thêm nhóm</button>
+    </div>
+
+    <!-- ==================== BẢNG HIỂN THỊ NHÓM ==================== -->
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 60px;">ID</th>
+                <th>Tên nhóm</th>
+                <th style="width: 180px;">Thứ tự</th>
+                <th style="width: 140px;">Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="groupTableBody">
+            <!-- Render từ JS -->
+        </tbody>
+    </table>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- 🟢 MODAL THÊM NHÓM -->
+<!-- ========================================================= -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm nhóm câu hỏi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <label class="form-label">Tên nhóm</label>
+                <input id="addTitle" class="form-control">
+
+                <label class="form-label mt-2">Mô tả</label>
+                <textarea id="addDescription" class="form-control"></textarea>
+
+                <label class="form-label mt-2">Thứ tự</label>
+                <input id="addOrder" type="number" class="form-control">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button class="btn btn-success" onclick="createGroup()">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- 🔵 MODAL SỬA NHÓM -->
+<!-- ========================================================= -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa nhóm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+
+                <label class="form-label">Tên nhóm</label>
+                <input id="editTitle" class="form-control">
+
+                <label class="form-label mt-2">Mô tả</label>
+                <textarea id="editDescription" class="form-control"></textarea>
+
+                <label class="form-label mt-2">Thứ tự</label>
+                <input id="editOrder" type="number" class="form-control">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button class="btn btn-primary" onclick="updateGroup()">Cập nhật</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- 🔴 MODAL XÓA NHÓM -->
+<!-- ========================================================= -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+            </div>
+
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa nhóm này?</p>
+                <strong id="deleteGroupName"></strong>
+                <input id="deleteId" type="hidden">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button class="btn btn-danger" onclick="deleteGroup()">Xóa</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+const API = "http://localhost:5086/api/questiongroup";
+
+
+// ========================= LOAD DANH SÁCH =========================
+async function loadGroups() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const tbody = document.getElementById("groupTableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(g => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${g.questionGroupId}</td>
+                <td>${g.title}</td>
+                <td>${g.order}</td>
+                <td>
+                    <span class="action-btn btn-edit" onclick="openEditModal(${g.questionGroupId})">Sửa</span>
+                    <span class="action-btn btn-delete" onclick="openDeleteModal(${g.questionGroupId}, '${g.title}')">Xóa</span>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+loadGroups();
+
+
+// ============================= THÊM =============================
+function openAddModal() {
+    new bootstrap.Modal(document.getElementById("addModal")).show();
+}
+
+async function createGroup() {
+    const group = {
+        title: document.getElementById("addTitle").value,
+        description: document.getElementById("addDescription").value,
+        order: Number(document.getElementById("addOrder").value)
+    };
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(group)
+    });
+
+    loadGroups();
+    bootstrap.Modal.getInstance(document.getElementById("addModal")).hide();
+}
+
+
+// ============================= SỬA =============================
+async function openEditModal(id) {
+    const res = await fetch(`${API}/${id}`);
+    const g = await res.json();
+
+    document.getElementById("editId").value = g.questionGroupId;
+    document.getElementById("editTitle").value = g.title;
+    document.getElementById("editDescription").value = g.description;
+    document.getElementById("editOrder").value = g.order;
+
+    new bootstrap.Modal(document.getElementById("editModal")).show();
+}
+
+async function updateGroup() {
+    const id = document.getElementById("editId").value;
+
+    const updated = {
+        title: document.getElementById("editTitle").value,
+        description: document.getElementById("editDescription").value,
+        order: Number(document.getElementById("editOrder").value)
+    };
+
+    await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated)
+    });
+
+    loadGroups();
+    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+}
+
+
+// ============================= XÓA =============================
+function openDeleteModal(id, name) {
+    document.getElementById("deleteId").value = id;
+    document.getElementById("deleteGroupName").innerText = name;
+
+    new bootstrap.Modal(document.getElementById("deleteModal")).show();
+}
+
+async function deleteGroup() {
+    const id = document.getElementById("deleteId").value;
+
+    await fetch(`${API}/${id}`, { method: "DELETE" });
+
+    loadGroups();
+    bootstrap.Modal.getInstance(document.getElementById("deleteModal")).hide();
+}
+
+</script>
+
+</body>
+</html>

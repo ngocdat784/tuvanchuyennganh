@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt lịch tư vấn</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background: #f4f9ff;
+        }
+
+        .card-counselor {
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4aa3ff;
+        }
+
+        .btn-main {
+            background: #0d6efd;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+    <h2 class="mb-3 text-center">📅 Đặt lịch tư vấn</h2>
+
+    <!-- Hiển thị thông tin chuyên viên -->
+    <div id="counselorBox" class="card-counselor mb-4 text-center">
+        <p>⏳ Đang tải thông tin...</p>
+    </div>
+
+    <!-- Form đặt lịch -->
+    <div class="card p-3 shadow-sm">
+        <h4>📝 Thông tin đặt lịch</h4>
+
+        <div class="mb-3">
+            <label class="form-label">Chọn ngày</label>
+            <input type="date" id="scheduleDate" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Chọn giờ</label>
+            <input type="time" id="scheduleTime" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ghi chú (tuỳ chọn)</label>
+            <textarea id="note" rows="3" class="form-control"></textarea>
+        </div>
+
+        <button class="btn-main w-100" onclick="submitSchedule()">📌 Xác nhận đặt lịch</button>
+
+        <div class="text-center mt-3">
+            <button class="btn btn-secondary" onclick="window.location.href='/index.html'">🏠 Về trang chủ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:5086/api";
+
+// Lấy counselorId từ URL
+const urlParams = new URLSearchParams(window.location.search);
+const counselorId = urlParams.get("counselorId");
+
+const token = localStorage.getItem("token");
+const studentId = localStorage.getItem("studentId");
+function authHeaders() {
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+}
+
+
+// Không kiểm tra đăng nhập ở đây
+// Giả định: nếu user chưa login → API sẽ tự trả 401
+
+
+async function loadCounselor() {
+    const box = document.getElementById("counselorBox");
+
+    const res = await fetch(`${API_BASE}/Counselor/${counselorId}`, {
+        headers: { Authorization: `Bearer ${token}` } // ✔ an toàn hơn
+    });
+
+    if (!res.ok) {
+        box.innerHTML = "<p class='text-danger'>Không tìm thấy chuyên viên!</p>";
+        return;
+    }
+
+    const c = await res.json();
+
+    box.innerHTML = `
+        <img src="${c.imageUrl}" class="avatar mb-3">
+        <h4>${c.fullName}</h4>
+        <p>${c.details || "Không có mô tả"}</p>
+    `;
+}
+
+
+loadCounselor();
+
+async function submitSchedule() {
+    const date = document.getElementById("scheduleDate").value;
+    const time = document.getElementById("scheduleTime").value;
+    const note = document.getElementById("note").value;
+
+    if (!date || !time) {
+        alert("⚠️ Vui lòng chọn ngày và giờ!");
+        return;
+    }
+
+    const bookingTime = `${date}T${time}:00`;
+
+   const model = {
+    counselorId: Number(counselorId),
+    studentId: Number(studentId),
+    bookingTime,
+    note,
+    status: "Pending"
+};
+
+
+    // 1️⃣ Tạo lịch
+    const res = await fetch(`${API_BASE}/Counselor/schedule`, {
+        method: "POST",
+        headers: authHeaders(), // ✅ TOKEN Ở ĐÂY
+        body: JSON.stringify(model)
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        alert(`❌ ${errorText}`);
+        return;
+    }
+
+    // 2️⃣ Gửi thông báo
+    const message = `📅 Bạn đã đặt lịch tư vấn vào lúc ${date} lúc ${time}. Trạng thái: Chờ duyệt.`;
+
+    await fetch(`${API_BASE}/notification`, {
+        method: "POST",
+        headers: authHeaders(), // ✅ TOKEN
+        body: JSON.stringify({
+            studentId: parseInt(studentId),
+            message
+        })
+    });
+
+    // 3️⃣ Hoàn tất
+    alert("🎉 Đặt lịch thành công!");
+    window.location.href = "/index.html";
+}
+
+
+</script>
+</body>
+</html>

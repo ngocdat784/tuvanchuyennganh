@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chi tiết ngành học</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body { background: #f5f6fa; }
+    .details-box {
+      background: #fff;
+      padding: 25px;
+      margin-top: 25px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .badge-custom {
+      background: #0d6efd;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      padding: 6px 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="details-box">
+
+      <h2 id="majorName" class="mb-3">Đang tải...</h2>
+      <p class="text-muted" id="majorCategory"></p>
+
+      <hr>
+
+      <!-- Description -->
+      <h5 class="fw-bold">Mô tả ngành</h5>
+      <p id="majorDescription">—</p>
+
+      <hr>
+
+      <!-- Traits -->
+      <h5 class="fw-bold">Tính cách phù hợp</h5>
+      <div id="traitsList" class="mb-3">Đang tải...</div>
+
+      <hr>
+
+      <!-- Career Impacts -->
+      <h5 class="fw-bold">Tác động nghề nghiệp</h5>
+      <div id="impactsList" class="mb-3">Đang tải...</div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <a href="/majors/index.html" class="btn btn-secondary">← Quay lại</a>
+        <a id="editBtn" class="btn btn-primary">Chỉnh sửa</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    if (!id) {
+      alert("Không tìm thấy ID ngành học!");
+      window.location.href = "/majors/index.html";
+    }
+
+    const API_URL = `/api/majors/${id}`;
+
+    async function loadDetails() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("Không kết nối API");
+
+        const data = await res.json();
+
+        // -------------------------
+        // Gán dữ liệu vào giao diện
+        // -------------------------
+
+        document.getElementById("majorName").textContent = data.name ?? "Không rõ";
+        document.getElementById("majorCategory").textContent =
+          "Danh mục nghề nghiệp: " + (data.jobCategory ?? "Không có");
+
+        document.getElementById("majorDescription").textContent =
+          data.description ?? "Không có mô tả";
+
+        // Traits
+        const traits = data.personalityTraits ?? [];
+        if (traits.length === 0) {
+          document.getElementById("traitsList").textContent = "Không có tính cách.";
+        } else {
+          document.getElementById("traitsList").innerHTML =
+            traits.map(t => `<span class="badge rounded-pill badge-custom">${t}</span>`).join("");
+        }
+
+        // Impacts
+        const impacts = data.careerImpacts ?? [];
+        if (impacts.length === 0) {
+          document.getElementById("impactsList").textContent = "Không có tác động nghề nghiệp.";
+        } else {
+          document.getElementById("impactsList").innerHTML =
+            impacts.map(i => `<span class="badge rounded-pill bg-success me-2 mb-2">${i}</span>`).join("");
+        }
+
+        // Nút Edit
+        document.getElementById("editBtn").href = `/majors/edit.html?id=${id}`;
+
+      } catch (err) {
+        console.error(err);
+        alert("Không thể tải chi tiết ngành!");
+        window.location.href = "/majors/index.html";
+      }
+    }
+
+    loadDetails();
+  </script>
+
+</body>
+</html>

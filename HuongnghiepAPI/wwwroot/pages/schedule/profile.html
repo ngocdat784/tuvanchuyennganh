@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ Chuyên Viên Tư Vấn</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <style>
+    body {
+    background: #eaf7f7;
+}
+
+/* CARD CHÍNH */
+.profile-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    max-width: 1000px;
+    margin: 60px auto;
+}
+
+/* BỐ CỤC 2 CỘT */
+.profile-layout {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+}
+
+/* CỘT ẢNH */
+.profile-left {
+    flex: 1;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+/* CỘT NỘI DUNG */
+.profile-right {
+    flex: 1.2;
+    background: #17b1b1;
+    color: white;
+    padding: 28px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* TÊN */
+.profile-name {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+/* GIỚI THIỆU */
+.profile-desc {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+/* NÚT ĐĂNG KÝ */
+.btn-book {
+    background: white;
+    color: #17b1b1 !important;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 17px;
+    border: none;
+    align-self: flex-start;
+    transition: 0.3s;
+}
+
+.btn-book:hover {
+    background: #f0fafa;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .profile-layout {
+        flex-direction: column;
+    }
+
+    .profile-img {
+        max-height: 300px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="profile-card">
+        <div id="profileContent"></div>
+    </div>
+
+</div>
+
+<script>
+    const API = "http://localhost:5086/api/Counselor";
+
+    // Lấy ID từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    async function loadProfile() {
+        try {
+            const res = await fetch(`${API}/${id}`);
+            const c = await res.json();
+
+            console.log(c);
+
+            const imgUrl = c.imageUrl
+                ? `http://localhost:5086${c.imageUrl}`
+                : "";
+
+            const box = document.getElementById("profileContent");
+
+           box.innerHTML = `
+    <div class="profile-layout">
+
+        <div class="profile-left">
+            ${imgUrl ? `<img src="${imgUrl}" class="profile-img">` : ""}
+        </div>
+
+        <div class="profile-right">
+            <div>
+                <div class="profile-name">${c.fullName}</div>
+
+                <div class="profile-desc">
+                    ${c.details ? c.details : "Chưa có thông tin mô tả"}
+                </div>
+            </div>
+
+            <button class="btn-book mt-4"
+                onclick="goToSchedule(${c.counselorId})">
+                Đăng ký tư vấn
+            </button>
+        </div>
+
+    </div>
+`;
+
+        } catch (err) {
+            console.error("Lỗi tải hồ sơ:", err);
+        }
+    }
+
+    loadProfile();
+    
+    function goToSchedule(counselorId) {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        // Đã đăng nhập → đến trang đặt lịch
+        window.location.href = `/pages/schedule/schedule.html?counselorId=${counselorId}`;
+    } else {
+        // Chưa đăng nhập → đến student-info để yêu cầu đăng nhập
+        window.location.href = `/pages/schedule/student-info.html`;
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng nhập</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+}
+.container {
+    max-width: 420px;
+    background: white;
+    margin: 60px auto;
+    padding: 30px;
+    border-radius: 12px;
+}
+label { font-weight: bold; display: block; margin-top: 15px; }
+input {
+    width: 100%; padding: 12px; margin-top: 6px;
+}
+button {
+    width: 100%; margin-top: 20px;
+    padding: 12px; background: #2563eb;
+    color: white; border: none; border-radius: 8px;
+}
+.msg { margin-top: 15px; text-align: center; }
+.link { text-align: center; margin-top: 15px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h2 style="text-align:center;">Đăng nhập hệ thống</h2>
+
+    <label>Email</label>
+    <input id="email" type="email">
+
+    <label>Mật khẩu</label>
+    <input id="password" type="password">
+
+    <button onclick="login()">Đăng nhập</button>
+
+    <div class="msg" id="msg"></div>
+
+    <div class="link">
+        <a href="register.html">Chưa có tài khoản? Đăng ký (Học sinh)</a>
+    </div>
+</div>
+
+<script>
+async function login() {
+    const data = {
+        email: email.value,
+        password: password.value
+    };
+
+    const res = await fetch("http://localhost:5086/api/student/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    // ❌ Đăng nhập thất bại
+    if (!res.ok) {
+        msg.style.color = "red";
+        msg.innerHTML = result.message || "Đăng nhập thất bại";
+        return;
+    }
+
+    // ✅ LƯU THEO CHUẨN DÙNG CHUNG CHO TOÀN SITE
+    localStorage.setItem("token", result.token);
+    localStorage.setItem("userId", result.userId);
+    localStorage.setItem("fullName", result.fullName);
+    localStorage.setItem("role", result.role);
+
+    msg.style.color = "green";
+    msg.innerHTML = "🎉 Đăng nhập thành công!";
+
+    // ✅ TẤT CẢ ROLE → VỀ TRANG CHỦ
+    setTimeout(() => {
+        window.location.href = "../../index.html";
+    }, 800);
+}
+
+</script>
+</body>
+</html>

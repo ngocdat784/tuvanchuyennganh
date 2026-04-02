@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng ký học sinh</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+}
+.container {
+    max-width: 500px;
+    background: white;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+}
+label { font-weight: bold; display: block; margin-top: 15px; }
+input, select {
+    width: 100%; padding: 12px; margin-top: 6px;
+}
+button {
+    width: 100%; margin-top: 20px;
+    padding: 12px; background: #2563eb;
+    color: white; border: none; border-radius: 8px;
+}
+.msg { margin-top: 15px; text-align: center; }
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2 style="text-align:center;">Đăng ký học sinh</h2>
+
+<label>Họ và tên</label>
+<input id="fullName">
+
+<label>Email</label>
+<input id="email" type="email">
+
+<label>Mật khẩu</label>
+<input id="password" type="password">
+
+<label>Trường</label>
+<input id="school">
+
+<label>Khối</label>
+<select id="grade">
+    <option value="10">Khối 10</option>
+    <option value="11">Khối 11</option>
+    <option value="12">Khối 12</option>
+</select>
+
+<label>Giới tính</label>
+<select id="gender">
+    <option value="Nam">Nam</option>
+    <option value="Nữ">Nữ</option>
+    <option value="Khác">Khác</option>
+</select>
+
+<label>Ngày sinh</label>
+<input id="birthDate" type="date">
+
+<button onclick="register()">Đăng ký</button>
+
+<div class="msg" id="msg"></div>
+</div>
+
+<script>
+async function register() {
+    const data = {
+        fullName: fullName.value,
+        email: email.value,
+        passwordHash: password.value,
+        school: school.value,
+        grade: grade.value,
+        gender: gender.value,
+        birthDate: birthDate.value
+    };
+
+    const res = await fetch("http://localhost:5086/api/student/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+        msg.style.color = "red";
+        msg.innerHTML = result.message || "Đăng ký thất bại";
+        return;
+    }
+
+    msg.style.color = "green";
+    msg.innerHTML = "🎉 Đăng ký thành công! Chuyển sang đăng nhập...";
+
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 1000);
+}
+</script>
+</body>
+</html>
