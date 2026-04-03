@@ -15,6 +15,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=app.db")
 );
+builder.Services.AddDbContext<OldDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -67,17 +70,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// ✅ SEED + MIGRATE + COPY DATA
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider; // 👈 THÊM DÒNG NÀY
+    var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+    var newDb = services.GetRequiredService<AppDbContext>();
+    var oldDb = services.GetRequiredService<OldDbContext>();
 
+    newDb.Database.Migrate();
 
-    DbInitializer.SeedAdmin(context);
+    // ❗ CHỈ migrate khi DB mới chưa có dữ liệu
+    if (!newDb.Admins.Any())
+    {
+        DataMigration.MigrateAllData(oldDb, newDb);
+    }
+
+    DbInitializer.SeedAdmin(newDb);
 }
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication(); // ⛔ PHẢI TRƯỚC
 app.UseAuthorization();  // ⛔ PHẢI SAU

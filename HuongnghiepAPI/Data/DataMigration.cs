@@ -1,93 +1,73 @@
-using CareerOrientationAPI.Data;
-using Microsoft.EntityFrameworkCore;
+using CareerOrientationAPI.Models;
 
-public class DataMigration
+namespace CareerOrientationAPI.Data
 {
-    public static void Migrate(IServiceProvider services)
+    public static class DataMigration
     {
-        using var scope = services.CreateScope();
+        public static void MigrateAllData(OldDbContext oldDb, AppDbContext newDb)
+        {
+            // -----------------------
+            // SIMPLE TABLES
+            // -----------------------
 
-        var oldDb = scope.ServiceProvider.GetRequiredService<OldDbContext>();
-        var newDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            newDb.Admins.AddRange(oldDb.Admins.ToList());
+            newDb.Students.AddRange(oldDb.Students.ToList());
+            newDb.Counselors.AddRange(oldDb.Counselors.ToList());
+            newDb.Notifications.AddRange(oldDb.Notifications.ToList());
 
-        Console.WriteLine("=== START MIGRATION ===");
+            // -----------------------
+            // MAJOR + RELATED
+            // -----------------------
 
-        // ❗ XÓA DATA CŨ (tránh duplicate)
-        newDb.Database.ExecuteSqlRaw("DELETE FROM AnswerImpacts");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM Answers");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM Questions");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM QuestionGroups");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM MajorTraits");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM MajorSubFields");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM UniversityMajors");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM Universities");
-        newDb.Database.ExecuteSqlRaw("DELETE FROM Majors");
+            newDb.Majors.AddRange(oldDb.Majors.ToList());
+            newDb.MajorTraits.AddRange(oldDb.MajorTraits.ToList());
+            newDb.MajorSubFields.AddRange(oldDb.MajorSubFields.ToList());
 
-        newDb.SaveChanges();
+            // -----------------------
+            // UNIVERSITY
+            // -----------------------
 
-        // =========================
-        // COPY THEO THỨ TỰ CHUẨN
-        // =========================
+            newDb.Universities.AddRange(oldDb.Universities.ToList());
+            newDb.UniversityMajors.AddRange(oldDb.UniversityMajors.ToList());
 
-        // 1. Majors
-        var majors = oldDb.Majors.AsNoTracking().ToList();
-        newDb.Majors.AddRange(majors);
-        newDb.SaveChanges();
-        Console.WriteLine("Majors done");
+            // -----------------------
+            // QUESTION SYSTEM
+            // -----------------------
 
-        // 2. Universities
-        var universities = oldDb.Universities.AsNoTracking().ToList();
-        newDb.Universities.AddRange(universities);
-        newDb.SaveChanges();
-        Console.WriteLine("Universities done");
+            newDb.QuestionGroups.AddRange(oldDb.QuestionGroups.ToList());
+            newDb.Questions.AddRange(oldDb.Questions.ToList());
+            newDb.Answers.AddRange(oldDb.Answers.ToList());
+            newDb.AnswerImpacts.AddRange(oldDb.AnswerImpacts.ToList());
 
-        // 3. UniversityMajors
-        var uniMajors = oldDb.UniversityMajors.AsNoTracking().ToList();
-        newDb.UniversityMajors.AddRange(uniMajors);
-        newDb.SaveChanges();
+            // -----------------------
+            // TEST SYSTEM
+            // -----------------------
 
-        // 4. MajorTraits
-        var traits = oldDb.MajorTraits.AsNoTracking().ToList();
-        newDb.MajorTraits.AddRange(traits);
-        newDb.SaveChanges();
+            newDb.TestResults.AddRange(oldDb.TestResults.ToList());
+            newDb.TestAnswers.AddRange(oldDb.TestAnswers.ToList());
+            newDb.TestAnswerImpacts.AddRange(oldDb.TestAnswerImpacts.ToList());
+            newDb.TestResultMajorScores.AddRange(oldDb.TestResultMajorScores.ToList());
 
-        // 5. MajorSubFields
-        var subFields = oldDb.MajorSubFields.AsNoTracking().ToList();
-        newDb.MajorSubFields.AddRange(subFields);
-        newDb.SaveChanges();
+            // -----------------------
+            // ROADMAP
+            // -----------------------
 
-        // 6. QuestionGroups
-        var groups = oldDb.QuestionGroups.AsNoTracking().ToList();
-        newDb.QuestionGroups.AddRange(groups);
-        newDb.SaveChanges();
+            newDb.Roadmaps.AddRange(oldDb.Roadmaps.ToList());
+            newDb.RoadmapStages.AddRange(oldDb.RoadmapStages.ToList());
+            newDb.RoadmapItems.AddRange(oldDb.RoadmapItems.ToList());
+            newDb.RoadmapSkills.AddRange(oldDb.RoadmapSkills.ToList());
 
-        // 7. Questions
-        var questions = oldDb.Questions.AsNoTracking().ToList();
-        newDb.Questions.AddRange(questions);
-        newDb.SaveChanges();
+            // -----------------------
+            // SCHEDULE
+            // -----------------------
 
-        // 8. Answers
-        var answers = oldDb.Answers.AsNoTracking().ToList();
-        newDb.Answers.AddRange(answers);
-        newDb.SaveChanges();
+            newDb.CounselingSchedules.AddRange(oldDb.CounselingSchedules.ToList());
 
-        // 9. AnswerImpacts
-        var impacts = oldDb.AnswerImpacts.AsNoTracking().ToList();
-        newDb.AnswerImpacts.AddRange(impacts);
-        newDb.SaveChanges();
+            // -----------------------
+            // SAVE
+            // -----------------------
 
-        // =========================
-        // TEST DATA (OPTIONAL)
-        // =========================
-
-        var students = oldDb.Students.AsNoTracking().ToList();
-        newDb.Students.AddRange(students);
-
-        var counselors = oldDb.Counselors.AsNoTracking().ToList();
-        newDb.Counselors.AddRange(counselors);
-
-        newDb.SaveChanges();
-
-        Console.WriteLine("=== MIGRATION DONE ===");
+            newDb.SaveChanges();
+        }
     }
 }

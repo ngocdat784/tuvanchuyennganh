@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HuongnghiepAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260402030949_InitSQLite")]
-    partial class InitSQLite
+    [Migration("20260403064647_InitSqlite")]
+    partial class InitSqlite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
