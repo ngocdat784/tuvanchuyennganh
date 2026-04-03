@@ -75,14 +75,18 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var newDb = services.GetRequiredService<AppDbContext>();
-    var oldDb = services.GetRequiredService<OldDbContext>();
-
     newDb.Database.Migrate();
 
-    // ❗ CHỈ migrate khi DB mới chưa có dữ liệu
-    if (!newDb.Admins.Any())
+    // ❗ CHỈ chạy migrate data ở LOCAL (Development)
+    if (app.Environment.IsDevelopment())
     {
-        DataMigration.MigrateAllData(oldDb, newDb);
+        var oldDb = services.GetRequiredService<OldDbContext>();
+
+        if (!newDb.Admins.Any())
+        {
+            Console.WriteLine(">>> MIGRATING DATA FROM SQL SERVER...");
+            DataMigration.MigrateAllData(oldDb, newDb);
+        }
     }
 
     DbInitializer.SeedAdmin(newDb);
