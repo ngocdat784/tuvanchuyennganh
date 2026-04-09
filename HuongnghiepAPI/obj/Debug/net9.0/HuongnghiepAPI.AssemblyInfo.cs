@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HuongnghiepAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c44c605f11cee4033553e3d718db37b1da3dbffc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bcdf41fb5b4d8a161f597386fbd20e8fc392b35e")]
 [assembly: System.Reflection.AssemblyProductAttribute("HuongnghiepAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HuongnghiepAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

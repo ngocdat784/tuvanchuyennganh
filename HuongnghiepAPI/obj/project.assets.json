@@ -1069,6 +1069,42 @@
           "buildTransitive/Mono.TextTemplating.targets": {}
         }
       },
+      "Selenium.WebDriver/4.41.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/WebDriver.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/WebDriver.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/Selenium.WebDriver.targets": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux/native/selenium-manager": {
+            "assetType": "native",
+            "rid": "linux"
+          },
+          "runtimes/osx/native/selenium-manager": {
+            "assetType": "native",
+            "rid": "osx"
+          },
+          "runtimes/win/native/selenium-manager.exe": {
+            "assetType": "native",
+            "rid": "win"
+          }
+        }
+      },
+      "Selenium.WebDriver.ChromeDriver/147.0.7727.5600": {
+        "type": "package",
+        "build": {
+          "build/Selenium.WebDriver.ChromeDriver.targets": {}
+        }
+      },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.10": {
         "type": "package",
         "dependencies": {
@@ -4017,6 +4053,54 @@
         "readme.md"
       ]
     },
+    "Selenium.WebDriver/4.41.0": {
+      "sha512": "oQPPzUGYy7M5+m3cMlGUKiswVLX/TbGySKH0jHsT0B9ZNfPZO6b0aqKNopR0FmDbSgjUsHoA9Vdur81/WW4DGg==",
+      "type": "package",
+      "path": "selenium.webdriver/4.41.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "build/Selenium.WebDriver.targets",
+        "buildTransitive/Selenium.WebDriver.targets",
+        "icon.png",
+        "lib/net462/WebDriver.dll",
+        "lib/net462/WebDriver.xml",
+        "lib/net8.0/WebDriver.dll",
+        "lib/net8.0/WebDriver.xml",
+        "lib/netstandard2.0/WebDriver.dll",
+        "lib/netstandard2.0/WebDriver.xml",
+        "runtimes/linux/native/selenium-manager",
+        "runtimes/osx/native/selenium-manager",
+        "runtimes/win/native/selenium-manager.exe",
+        "selenium.webdriver.4.41.0.nupkg.sha512",
+        "selenium.webdriver.nuspec"
+      ]
+    },
+    "Selenium.WebDriver.ChromeDriver/147.0.7727.5600": {
+      "sha512": "tkkDX0hvR4mLKlv5yUq1HqcxwbJeGlwjpsLD4S3R2VC1IrsiQV9JTTdDZXTjd7kdWfFvMVYadF4rHad1E94+5g==",
+      "type": "package",
+      "path": "selenium.webdriver.chromedriver/147.0.7727.5600",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "build/DefinePropertiesChromeDriver.targets",
+        "build/Selenium.WebDriver.ChromeDriver.targets",
+        "driver/linux64/LICENSE.chromedriver",
+        "driver/linux64/chromedriver",
+        "driver/mac64/LICENSE.chromedriver",
+        "driver/mac64/chromedriver",
+        "driver/mac64arm/LICENSE.chromedriver",
+        "driver/mac64arm/chromedriver",
+        "driver/win32/LICENSE.chromedriver",
+        "driver/win32/chromedriver.exe",
+        "nupkg-icon.png",
+        "selenium.webdriver.chromedriver.147.0.7727.5600.nupkg.sha512",
+        "selenium.webdriver.chromedriver.nuspec"
+      ]
+    },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.10": {
       "sha512": "UxWuisvZ3uVcVOLJQv7urM/JiQH+v3TmaJc1BLKl5Dxfm/nTzTUrqswCqg/INiYLi61AXnHo1M1JPmPqqLnAdg==",
       "type": "package",
@@ -5249,6 +5333,8 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Sqlite >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Tools >= 9.0.0",
+      "Selenium.WebDriver >= 4.41.0",
+      "Selenium.WebDriver.ChromeDriver >= 147.0.7727.5600",
       "Swashbuckle.AspNetCore >= 6.6.2",
       "System.IdentityModel.Tokens.Jwt >= 8.15.0"
     ]
@@ -5321,6 +5407,14 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[9.0.0, )"
+          },
+          "Selenium.WebDriver": {
+            "target": "Package",
+            "version": "[4.41.0, )"
+          },
+          "Selenium.WebDriver.ChromeDriver": {
+            "target": "Package",
+            "version": "[147.0.7727.5600, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
