@@ -397,3 +397,7 @@ D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\win-arm\native\e_sq
 D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\win-arm64\native\e_sqlite3.dll
 D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\win-x64\native\e_sqlite3.dll
 D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\win-x86\native\e_sqlite3.dll
+D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\WebDriver.dll
+D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\linux\native\selenium-manager
+D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\osx\native\selenium-manager
+D:\tuvanchuyennganh\HuongnghiepAPI\bin\Debug\net9.0\runtimes\win\native\selenium-manager.exe
