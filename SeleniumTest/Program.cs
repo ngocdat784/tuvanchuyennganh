@@ -58,25 +58,32 @@ class FullTestFlow
             // =========================
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id("questionTitle")));
 
-            // =========================
-            // 7. LOOP TRẢ LỜI (FIX QUAN TRỌNG)
-            // =========================
-          while (true)
+           Random rnd = new Random();
+
+while (true)
 {
-    // lấy câu hiện tại
     var question = driver.FindElement(By.Id("questionTitle"));
     string oldQuestion = question.Text;
 
-    // đợi đáp án mới load
+    Console.WriteLine("Câu: " + oldQuestion);
+
+    // đợi đáp án load
     wait.Until(d => d.FindElements(By.CssSelector("#answerList label")).Count > 0);
 
     var labels = driver.FindElements(By.CssSelector("#answerList label"));
 
-    // click đáp án
-    ((IJavaScriptExecutor)driver)
-        .ExecuteScript("arguments[0].click();", labels[0]);
+    // random đáp án
+    int index = rnd.Next(labels.Count);
+    var selectedLabel = labels[index];
 
-    Console.WriteLine("Đã chọn đáp án");
+    // click
+    ((IJavaScriptExecutor)driver)
+        .ExecuteScript("arguments[0].scrollIntoView(true);", selectedLabel);
+
+    ((IJavaScriptExecutor)driver)
+        .ExecuteScript("arguments[0].click();", selectedLabel);
+
+    Console.WriteLine($"Đã chọn đáp án: {index + 1}");
 
     // NEXT
     var next = driver.FindElements(By.Id("nextBtn"));
@@ -85,7 +92,7 @@ class FullTestFlow
         ((IJavaScriptExecutor)driver)
             .ExecuteScript("arguments[0].click();", next[0]);
 
-        // đợi câu mới (FIX QUAN TRỌNG NHẤT)
+        // đợi câu mới
         wait.Until(d =>
         {
             var newText = d.FindElement(By.Id("questionTitle")).Text;
