@@ -6,44 +6,73 @@ class Program
     {
         while (true)
         {
-            Console.Clear();
+            ShowMenu();
 
-            Console.WriteLine("=================================");
-            Console.WriteLine("   SELENIUM TEST MENU");
-            Console.WriteLine("=================================");
-            Console.WriteLine("1. Test Full Flow (Làm bài test)");
-            Console.WriteLine("2. Test Phân quyền (Role)");
-            Console.WriteLine("0. Thoát");
-            Console.WriteLine("=================================");
             Console.Write("Chọn test: ");
-
             string choice = Console.ReadLine();
 
-            switch (choice)
-            {
-                case "1":
-                    Console.WriteLine("Đang chạy Full Flow...");
-                    FullTestFlow.Run();
-                    Pause();
-                    break;
+            if (choice == "0") return;
 
-                case "2":
-                    Console.WriteLine("Đang chạy Role Test...");
-                    RoleTestFlow.Run();
-                    Pause();
-                    break;
+            RunTest(choice);
 
-                case "0":
-                    return;
-
-                default:
-                    Console.WriteLine("Lựa chọn không hợp lệ!");
-                    Pause();
-                    break;
-            }
+            Pause();
         }
     }
 
+    // ================= MENU =================
+    static void ShowMenu()
+    {
+        Console.Clear();
+
+        Console.WriteLine("=================================");
+        Console.WriteLine("       SELENIUM TEST MENU");
+        Console.WriteLine("=================================");
+        Console.WriteLine("1. Test Full Flow (Làm bài test)");
+        Console.WriteLine("2. Test Phân quyền (Role)");
+        Console.WriteLine("3. Test Đặt lịch tư vấn");
+        Console.WriteLine("0. Thoát");
+        Console.WriteLine("=================================");
+    }
+
+    // ================= RUN TEST =================
+    static void RunTest(string choice)
+    {
+        switch (choice)
+        {
+            case "1":
+                RunWithTitle("Full Flow Test", FullTestFlow.Run);
+                break;
+
+            case "2":
+                RunWithTitle("Role Test", RoleTestFlow.Run);
+                break;
+
+            case "3":
+                RunWithTitle("Schedule Test", ScheduleTestFlow.Run);
+                break;
+
+            default:
+                Console.WriteLine("❌ Lựa chọn không hợp lệ!");
+                break;
+        }
+    }
+
+    // ================= WRAPPER =================
+    static void RunWithTitle(string title, Action testMethod)
+    {
+        Console.WriteLine($"\n===== {title.ToUpper()} =====");
+
+        try
+        {
+            testMethod();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("TEST FAIL: " + ex.Message);
+        }
+    }
+
+    // ================= PAUSE =================
     static void Pause()
     {
         Console.WriteLine("\nNhấn phím bất kỳ để quay lại menu...");
