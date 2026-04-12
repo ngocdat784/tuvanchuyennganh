@@ -30,6 +30,8 @@ class Program
         Console.WriteLine("1. Test Full Flow (Làm bài test)");
         Console.WriteLine("2. Test Phân quyền (Role)");
         Console.WriteLine("3. Test Đặt lịch tư vấn");
+        Console.WriteLine("4. Test Admin CRUD ngành");
+        Console.WriteLine("5. Test Admin CRUD nhóm câu hỏi");
         Console.WriteLine("0. Thoát");
         Console.WriteLine("=================================");
     }
@@ -51,6 +53,14 @@ class Program
                 RunWithTitle("Schedule Test", ScheduleTestFlow.Run);
                 break;
 
+            case "4":
+                RunWithTitle("Admin CRUD Major Test", ManagerMajorsTestFlow.Run);
+                break;
+
+            case "5":
+                RunWithTitle("Admin CRUD Question Group Test", QuestionGroupTestFlow.Run);
+                break;
+
             default:
                 Console.WriteLine("❌ Lựa chọn không hợp lệ!");
                 break;
@@ -65,10 +75,11 @@ class Program
         try
         {
             testMethod();
+            Console.WriteLine("✅ TEST PASS");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("TEST FAIL: " + ex.Message);
+            Console.WriteLine("❌ TEST FAIL: " + ex.Message);
         }
     }
 
