@@ -22,6 +22,7 @@ namespace CareerOrientationAPI.Models
         public string? StageDescription { get; set; }
 
         // --- Navigation ---
+        [JsonIgnore]
         public Roadmap? Roadmap { get; set; }
 
         public ICollection<RoadmapItem> Items { get; set; } = new List<RoadmapItem>();

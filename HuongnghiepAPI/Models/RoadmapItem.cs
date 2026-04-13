@@ -25,6 +25,7 @@ namespace CareerOrientationAPI.Models
         public string? ResourceLink { get; set; }
 
         // --- Navigation ---
+        [JsonIgnore]
         public RoadmapStage? Stage { get; set; }
 
         public ICollection<RoadmapSkill> Skills { get; set; } = new List<RoadmapSkill>();

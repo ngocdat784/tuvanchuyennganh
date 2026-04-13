@@ -18,6 +18,7 @@ namespace CareerOrientationAPI.Models
         public string? Description { get; set; }
 
         // --- Navigation ---
+        [JsonIgnore]
         public RoadmapItem? Item { get; set; }
     }
 }
